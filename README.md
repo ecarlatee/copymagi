@@ -1,49 +1,61 @@
 # Copimagi
 
-Copimagi is a web application that allows you to copy and paste text, images, and videos between devices (e.g., from phone to computer) instantly using QR codes and WebSockets.
+**Copimagi** is a seamless web application designed to bridge the gap between your devices. Instantly copy and paste text, images, and videos from your phone to your computer (or vice versa) using a simple QR code scan. No apps to install, no accounts to create.
 
-## Features
+## ✨ Features
 
-- **Receiver (Computer)**: Generates a unique session and displays a QR code.
-- **Sender (Phone)**: Scans the QR code to join the session and send text or files.
-- **Real-time**: Text and files are transferred instantly via WebSockets.
-- **File Support**: Send images and videos directly from your phone gallery.
-- **Secure**: Sessions are temporary and unique.
+- **Instant Transfer**: Real-time communication using WebSockets.
+- **Cross-Device**: Works on any device with a web browser.
+- **Rich Media Support**: Send text, images, and videos.
+- **Zero Setup**: Just scan a QR code to connect.
+- **Secure & Private**: Unique, temporary sessions.
+- **Modern UI**: Beautiful, glassmorphism-inspired interface.
 
-## Getting Started (Local)
+## 🚀 Getting Started
 
-First, install dependencies:
+### Prerequisites
 
-```bash
-npm install
-```
+- Node.js 18+
+- npm
 
-Then, run the development server:
+### Installation
 
-```bash
-npm run dev
-```
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/ecarlatee/copymagi.git
+   cd copymagi
+   ```
 
-To use it with your phone on the same Wi-Fi network:
-1. Find your computer's local IP address (e.g., `192.168.1.x`).
-2. Open `http://YOUR_LOCAL_IP:3000` on your computer.
-3. Scan the QR code with your phone to start sending text or files.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Deployment (Public Access)
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-To use Copimagi from anywhere (without being on the same Wi-Fi), deploy it to a service like Render or Railway.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-1. Push your code to GitHub.
-2. Create a new Web Service on [Render](https://render.com).
-3. Connect your repository.
-4. Use the following settings:
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-5. Once deployed, open the provided URL on your computer and scan the QR code with your phone.
+To test across devices locally, ensure both devices are on the same network and access the server via your machine's local IP address (e.g., `http://192.168.1.x:3000`).
 
-## Tech Stack
+## 🌐 Deployment
 
-- Next.js 14
-- Socket.io (with 100MB buffer for files)
-- Tailwind CSS
-- TypeScript
+This project is ready to be deployed on platforms like [Render](https://render.com), [Vercel](https://vercel.com), or [Railway](https://railway.app).
+
+**Recommended Settings:**
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `npm start`
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/)
+- **Real-time**: [Socket.io](https://socket.io/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+
+## 👤 Author
+
+Created by **Ecarlate**.
+Visit [eyeswoke.com](https://eyeswoke.com) for more.
