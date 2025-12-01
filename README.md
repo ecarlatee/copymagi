@@ -1,4 +1,4 @@
-# Copimagi
+# Copymagi
 
 **Copimagi** is a seamless web application designed to bridge the gap between your devices. Instantly copy and paste text, images, and videos from your phone to your computer (or vice versa) using a simple QR code scan. No apps to install, no accounts to create.
 
