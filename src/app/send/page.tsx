@@ -3,107 +3,132 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { io, Socket } from 'socket.io-client';
+import { Button } from '@/components/ui/button';
 
 let socket: Socket;
 
 function SendContent() {
   const searchParams = useSearchParams();
-  const id = searchParams.get('id');
+  const roomId = searchParams.get('id');
   const [text, setText] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState('Connecting...');
-  const [sent, setSent] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (!id) {
-      setStatus('No ID provided. Please scan the QR code again.');
+    if (!roomId) {
+      setStatus('No room ID provided. Please scan the QR code again.');
       return;
     }
 
     socket = io();
 
     socket.on('connect', () => {
-      setStatus('Connected to ' + id);
-      socket.emit('join-room', id);
+      setStatus('Connected');
+      socket.emit('join-room', roomId);
+    });
+
+    socket.on('disconnect', () => {
+      setStatus('Disconnected');
     });
 
     return () => {
       if (socket) socket.disconnect();
     };
-  }, [id]);
+  }, [roomId]);
 
-  const handleSend = () => {
-    if (!socket || !id) return;
+  const handleSendText = () => {
+    if (!socket || !roomId || !text.trim()) return;
+    socket.emit('send-text', { roomId, text });
+    setStatus(`Text sent to room ${roomId}`);
+    setText('');
+    setTimeout(() => setStatus('Connected'), 2000);
+  };
 
-    if (text) {
-      socket.emit('send-text', { roomId: id, text });
-      setSent(true);
-      setTimeout(() => setSent(false), 2000);
-    }
-
-    if (file) {
-      setUploading(true);
-      // Read file as buffer
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (e.target?.result) {
-          socket.emit('send-file', {
-            roomId: id,
-            file: e.target.result,
-            fileName: file.name,
-            fileType: file.type
-          });
-          setUploading(false);
-          setSent(true);
-          setTimeout(() => setSent(false), 2000);
-          setFile(null); // Reset file input
-        }
-      };
-      reader.readAsArrayBuffer(file);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      if (selectedFile.size > 100 * 1024 * 1024) {
+        setStatus('File is too large (max 100MB).');
+        return;
+      }
+      setFile(selectedFile);
     }
   };
 
+  const handleSendFile = () => {
+    if (!socket || !roomId || !file) return;
+
+    setStatus('Uploading file...');
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      if (e.target?.result) {
+        socket.emit('send-file', {
+          roomId,
+          file: e.target.result,
+          fileName: file.name,
+          fileType: file.type,
+        });
+        setStatus(`File "${file.name}" sent!`);
+        setFile(null);
+        setTimeout(() => setStatus('Connected'), 3000);
+      } else {
+        setStatus('Failed to read file.');
+        setTimeout(() => setStatus('Connected'), 3000);
+      }
+    };
+    reader.onerror = () => {
+      setStatus('Error reading file.');
+      setTimeout(() => setStatus('Connected'), 3000);
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full max-w-2xl">
-        <h1 className="text-4xl font-bold text-center sm:text-left">Copimagi Sender</h1>
-        <p className="text-lg text-center sm:text-left">{status}</p>
-
-        <div className="w-full flex flex-col gap-4">
-          <textarea
-            className="w-full h-40 p-4 border border-gray-300 rounded-lg bg-white dark:bg-gray-900 text-black dark:text-white"
-            placeholder="Type or paste text here..."
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-
-          <div className="flex flex-col gap-2">
-            <label className="font-semibold">Or select a file (Image/Video):</label>
-            <input
-              type="file"
-              accept="image/*,video/*"
-              onChange={(e) => setFile(e.target.files ? e.target.files[0] : null)}
-              className="block w-full text-sm text-gray-500
-                file:mr-4 file:py-2 file:px-4
-                file:rounded-full file:border-0
-                file:text-sm file:font-semibold
-                file:bg-blue-50 file:text-blue-700
-                hover:file:bg-blue-100"
-            />
-            {file && <p className="text-sm text-gray-600">Selected: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)</p>}
-          </div>
+    <div className="flex flex-col items-center justify-center p-4 sm:p-8">
+      <main className="w-full max-w-md bg-card/50 backdrop-blur-lg border rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold">Send to Room</h1>
+          <p className="text-muted-foreground text-sm font-mono">{roomId}</p>
         </div>
 
-        <button
-          className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition-colors ${
-            sent ? 'bg-green-600' : 'bg-blue-600 hover:bg-blue-700'
-          } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
-          onClick={handleSend}
-          disabled={(!id || (!text && !file)) || uploading}
-        >
-          {uploading ? 'Sending File...' : sent ? 'Sent!' : 'Send'}
-        </button>
+        <div className="w-full space-y-4">
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Type or paste your text here..."
+            className="w-full h-32 bg-muted/50 border rounded-xl p-4 text-sm focus:ring-2 focus:ring-primary focus:outline-none transition-shadow duration-300"
+          />
+          <Button onClick={handleSendText} className="w-full" disabled={!text.trim()}>
+            Send Text
+          </Button>
+        </div>
+
+        <div className="w-full space-y-4">
+          <div className="w-full h-32 bg-muted/50 border-2 border-dashed rounded-xl flex flex-col items-center justify-center text-center p-4 cursor-pointer hover:border-primary transition-colors" onClick={() => document.getElementById('fileInput')?.click()}>
+            <input
+              type="file"
+              id="fileInput"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            {file ? (
+              <div className="text-sm text-foreground">
+                <p className="font-semibold">{file.name}</p>
+                <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+              </div>
+            ) : (
+              <div className="text-sm text-muted-foreground">
+                <p>Click to select a file</p>
+                <p className="text-xs mt-1">Max 100MB</p>
+              </div>
+            )}
+          </div>
+          <Button onClick={handleSendFile} className="w-full" disabled={!file}>
+            Send File
+          </Button>
+        </div>
+        
+        {status && <p className="text-sm text-muted-foreground mt-4">{status}</p>}
       </main>
     </div>
   );

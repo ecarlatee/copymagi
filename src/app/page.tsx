@@ -61,50 +61,63 @@ export default function Home() {
   const sendUrl = typeof window !== 'undefined' ? `${window.location.origin}/send?id=${roomId}` : '';
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full max-w-2xl">
-        <h1 className="text-4xl font-bold text-center sm:text-left">Copimagi Receiver</h1>
-        <p className="text-lg text-center sm:text-left">{status}</p>
+    <div className="flex flex-col items-center justify-center p-4 sm:p-8">
+      <main className="w-full max-w-md bg-card/50 backdrop-blur-lg border rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl">
+        <div className="text-center space-y-2">
+          <h1 className="text-4xl font-bold">Copimagi</h1>
+          <p className="text-muted-foreground text-sm">{status}</p>
+        </div>
 
         {roomId && (
-          <div className="flex flex-col items-center gap-4 p-4 bg-white rounded-lg shadow-md">
-            <QRCodeSVG value={sendUrl} size={256} />
-            <p className="text-sm text-gray-500 break-all text-center">{sendUrl}</p>
+          <div className="qr-reflection flex flex-col items-center gap-4 p-6 bg-card/70 rounded-2xl shadow-inner w-full border">
+            <QRCodeSVG value={sendUrl} size={200} className="w-full h-auto max-w-[200px] rounded-lg" bgColor="transparent" fgColor="hsl(var(--foreground))" />
+            <p className="text-xs text-muted-foreground break-all text-center font-mono bg-muted p-2 rounded w-full">
+              {sendUrl}
+            </p>
           </div>
         )}
 
         {receivedText && (
-          <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <h2 className="text-xl font-semibold mb-2">Received Text:</h2>
-            <pre className="whitespace-pre-wrap break-words p-4 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-              {receivedText}
-            </pre>
-            {copyStatus && <p className="mt-2 text-green-600 font-medium">{copyStatus}</p>}
+          <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-muted/50 border rounded-xl p-4 relative group">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Received Text</h2>
+              <pre className="whitespace-pre-wrap break-words text-sm font-mono text-foreground max-h-60 overflow-y-auto custom-scrollbar">
+                {receivedText}
+              </pre>
+              {copyStatus && (
+                <div className="absolute top-2 right-2 bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full backdrop-blur-sm">
+                  {copyStatus}
+                </div>
+              )}
+            </div>
           </div>
         )}
 
         {receivedFile && (
-          <div className="w-full p-4 border border-gray-300 rounded-lg bg-gray-50 dark:bg-gray-800">
-            <h2 className="text-xl font-semibold mb-2">Received File: {receivedFile.name}</h2>
-            <div className="flex flex-col gap-4 items-center">
-              {receivedFile.type.startsWith('image/') ? (
-                <img src={receivedFile.url} alt={receivedFile.name} className="max-w-full max-h-96 rounded" />
-              ) : receivedFile.type.startsWith('video/') ? (
-                <video src={receivedFile.url} controls className="max-w-full max-h-96 rounded" />
-              ) : (
-                <div className="p-8 bg-gray-200 dark:bg-gray-700 rounded text-center">
-                  File type not previewable
-                </div>
-              )}
-              <a
-                href={receivedFile.url}
-                download={receivedFile.name}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-              >
-                Download {receivedFile.name}
-              </a>
+          <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-muted/50 border rounded-xl p-4">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Received File</h2>
+              <div className="flex flex-col gap-4 items-center">
+                {receivedFile.type.startsWith('image/') ? (
+                  <img src={receivedFile.url} alt={receivedFile.name} className="w-full rounded-lg border" />
+                ) : receivedFile.type.startsWith('video/') ? (
+                  <video src={receivedFile.url} controls className="w-full rounded-lg border" />
+                ) : (
+                  <div className="p-8 bg-card/50 rounded-lg text-center w-full border">
+                    <span className="text-4xl">📄</span>
+                    <p className="mt-2 text-sm text-muted-foreground">{receivedFile.name}</p>
+                  </div>
+                )}
+                <a
+                  href={receivedFile.url}
+                  download={receivedFile.name}
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 w-full py-3 rounded-xl font-semibold text-center text-sm"
+                >
+                  Download {receivedFile.name}
+                </a>
+              </div>
+              {copyStatus && <p className="mt-2 text-green-400 text-xs text-center">{copyStatus}</p>}
             </div>
-            {copyStatus && <p className="mt-2 text-green-600 font-medium">{copyStatus}</p>}
           </div>
         )}
       </main>
