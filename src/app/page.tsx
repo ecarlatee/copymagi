@@ -64,7 +64,7 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center p-4 sm:p-8">
       <main className="w-full max-w-md bg-card/50 backdrop-blur-lg border rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl">
         <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold">Copimagi</h1>
+          <h1 className="text-4xl font-bold">Copymagi</h1>
           <p className="text-muted-foreground text-sm">{status}</p>
         </div>
 

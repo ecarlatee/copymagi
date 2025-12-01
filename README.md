@@ -1,6 +1,6 @@
 # Copymagi
 
-**Copimagi** is a seamless web application designed to bridge the gap between your devices. Instantly copy and paste text, images, and videos from your phone to your computer (or vice versa) using a simple QR code scan. No apps to install, no accounts to create.
+**Copymagi** is a seamless web application designed to bridge the gap between your devices. Instantly copy and paste text, images, and videos from your phone to your computer (or vice versa) using a simple QR code scan. No apps to install, no accounts to create.
 
 ## ✨ Features
 
@@ -58,4 +58,4 @@ This project is ready to be deployed on platforms like [Render](https://render.c
 ## 👤 Author
 
 Created by **Ecarlate**.
-Visit [eyeswoke.com](https://eyeswoke.com) for more.
+Visit [eyeswoke.com](https://eyeswoke.com).

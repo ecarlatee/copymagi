@@ -11,7 +11,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Copimagi",
+  title: "Copymagi",
   description: "Copy paste between devices",
 };
 
@@ -38,7 +38,7 @@ export default function RootLayout({
           </header>
           <div className="flex-grow">{children}</div>
           <footer className="w-full py-6 text-center text-xs text-gray-500 border-t">
-            <p>&copy; {new Date().getFullYear()} Copimagi. All Rights Reserved.</p>
+            <p>&copy; {new Date().getFullYear()} Copymagi. All Rights Reserved.</p>
             <p>
               Created by{" "}
               <a
