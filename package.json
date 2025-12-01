@@ -27,9 +27,12 @@
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
     "@types/uuid": "^11.0.0",
+    "clsx": "^2.1.1",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.33",
+    "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5"
   }
 }
