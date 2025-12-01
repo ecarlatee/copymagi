@@ -69,9 +69,10 @@ export default function Home() {
         </div>
 
         {roomId && (
-          <div className="qr-reflection flex flex-col items-center gap-4 p-6 bg-card/70 rounded-2xl shadow-inner w-full border">
-            <QRCodeSVG value={sendUrl} size={200} className="w-full h-auto max-w-[200px] rounded-lg" bgColor="transparent" fgColor="hsl(var(--foreground))" />
-            <p className="text-xs text-muted-foreground break-all text-center font-mono bg-muted p-2 rounded w-full">
+          <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 bg-card/70 rounded-2xl shadow-inner w-full border">
+            <div className="qr-reflection" />
+            <QRCodeSVG value={sendUrl} size={200} className="w-full h-auto max-w-[200px] rounded-lg relative z-10" bgColor="transparent" fgColor="hsl(var(--foreground))" />
+            <p className="text-xs text-muted-foreground break-all text-center font-mono bg-muted p-2 rounded w-full relative z-10">
               {sendUrl}
             </p>
           </div>
