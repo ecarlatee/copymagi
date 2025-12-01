@@ -16,7 +16,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
+        <div className="flex-grow">{children}</div>
+        <footer className="w-full py-6 text-center text-sm text-gray-500 border-t border-gray-200 dark:border-gray-800">
+          <p>
+            Created by{" "}
+            <a
+              href="https://eyeswoke.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium hover:underline hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            >
+              eyeswoke.com
+            </a>
+          </p>
+        </footer>
+      </body>
     </html>
   );
 }
