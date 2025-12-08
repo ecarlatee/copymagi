@@ -3,6 +3,10 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ModeToggle } from "@/components/mode-toggle";
+import { LanguageProvider } from "@/components/language-provider";
+import { LanguageToggle } from "@/components/language-toggle";
+import { HeaderContent } from "@/components/header-content";
+import { FooterContent } from "@/components/footer-content";
 import Link from "next/link";
 
 const poppins = Poppins({ 
@@ -12,7 +16,13 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: "Copymagi",
-  description: "Copy paste between devices",
+  description: "Copy paste between devices instantly. Share text, images, and videos across phones and computers with a simple QR code.",
+  keywords: ["copy paste", "clipboard sync", "file transfer", "cross-device", "QR code", "share text", "share files", "Copymagi"],
+  openGraph: {
+    title: "Copymagi - Seamless Cross-Device Copy Paste",
+    description: "Instantly transfer text and files between devices without login.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -23,40 +33,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.className} flex flex-col min-h-screen`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <header className="w-full p-4 flex justify-between items-center">
-            <Link href="/" className="font-bold text-xl hover:opacity-80 transition-opacity">
-              Copymagi
-            </Link>
-            <div className="flex items-center gap-4">
-              <nav className="flex gap-4">
-                <Link href="/info" className="text-sm font-medium hover:underline">Info</Link>
-                <Link href="/contact" className="text-sm font-medium hover:underline">Contact</Link>
-              </nav>
-              <ModeToggle />
-            </div>
-          </header>
-          <div className="flex-grow">{children}</div>
-          <footer className="w-full py-6 text-center text-xs text-gray-500 border-t">
-            <p>&copy; {new Date().getFullYear()} Copymagi. All Rights Reserved.</p>
-            <p>
-              Created by{" "}
-              <a
-                href="https://eyeswoke.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium hover:underline"
-              >
-                eyeswoke.com
-              </a>
-            </p>
-          </footer>
-        </ThemeProvider>
+        <LanguageProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <HeaderContent />
+            <div className="flex-grow">{children}</div>
+            <FooterContent />
+          </ThemeProvider>
+        </LanguageProvider>
       </body>
     </html>
   );
