@@ -45,6 +45,10 @@ const translations: Translations = {
     fileSent: "File sent!",
     failedRead: "Failed to read file.",
     errorRead: "Error reading file.",
+    searchNearby: "Search Nearby Rooms",
+    noNearbyFound: "No nearby rooms found.",
+    joinRoom: "Join Room",
+    nearbyRooms: "Nearby Rooms",
   },
   fr: {
     info: "Info",
@@ -80,6 +84,10 @@ const translations: Translations = {
     fileSent: "Fichier envoyé !",
     failedRead: "Échec de la lecture du fichier.",
     errorRead: "Erreur lors de la lecture du fichier.",
+    searchNearby: "Rechercher des salles à proximité",
+    noNearbyFound: "Aucune salle trouvée à proximité.",
+    joinRoom: "Rejoindre la salle",
+    nearbyRooms: "Salles à proximité",
   },
 }
 

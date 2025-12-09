@@ -5,6 +5,8 @@ import { io, Socket } from 'socket.io-client';
 import { QRCodeSVG } from 'qrcode.react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLanguage } from '@/components/language-provider';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 let socket: Socket;
 
@@ -16,6 +18,8 @@ export default function Home() {
   const [status, setStatus] = useState<string>('Connecting...');
   const [copyStatus, setCopyStatus] = useState<string>('');
   const [urlCopyStatus, setUrlCopyStatus] = useState<string>('');
+  const [nearbyRooms, setNearbyRooms] = useState<string[]>([]);
+  const [showNearby, setShowNearby] = useState(false);
 
   useEffect(() => {
     setStatus(t('connecting'));
@@ -32,6 +36,28 @@ export default function Home() {
     socket.on('connect', () => {
       setStatus(t('connected'));
       socket.emit('join-room', id);
+      
+      // Try to get location for proximity features
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            socket.emit('join-room', id, { lat: pos.coords.latitude, lon: pos.coords.longitude });
+          },
+          (err) => console.log('Location access denied or error', err),
+          { timeout: 10000 }
+        );
+      }
+    });
+
+    socket.on('nearby-rooms', (rooms: string[]) => {
+      // Filter out current room
+      const otherRooms = rooms.filter(r => r !== id);
+      setNearbyRooms(otherRooms);
+      if (otherRooms.length === 0) {
+        alert(t('noNearbyFound'));
+      } else {
+        setShowNearby(true);
+      }
     });
 
     socket.on('receive-text', (text: string) => {
@@ -76,6 +102,25 @@ export default function Home() {
     }
   };
 
+  const handleSearchNearby = () => {
+    if (socket) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            socket.emit('get-nearby-rooms', { lat: pos.coords.latitude, lon: pos.coords.longitude });
+          },
+          (err) => {
+            console.log('Location access denied or error', err);
+            socket.emit('get-nearby-rooms', null); // Fallback to IP only
+          },
+          { timeout: 10000 }
+        );
+      } else {
+        socket.emit('get-nearby-rooms', null);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center p-4 sm:p-8">
       <main className="w-full max-w-md bg-card/50 backdrop-blur-lg border rounded-3xl p-8 flex flex-col items-center gap-6 shadow-2xl">
@@ -102,6 +147,28 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        <div className="w-full">
+          <Button variant="outline" className="w-full" onClick={handleSearchNearby}>
+            {t('searchNearby')}
+          </Button>
+          
+          {showNearby && nearbyRooms.length > 0 && (
+            <div className="mt-4 space-y-2 animate-in fade-in slide-in-from-top-2">
+              <h3 className="text-sm font-semibold text-muted-foreground">{t('nearbyRooms')}</h3>
+              <div className="grid gap-2">
+                {nearbyRooms.map((room) => (
+                  <Link key={room} href={`/send?id=${room}`} className="block">
+                    <Button variant="secondary" className="w-full justify-between">
+                      <span className="font-mono text-xs truncate max-w-[150px]">{room}</span>
+                      <span className="text-xs">{t('joinRoom')}</span>
+                    </Button>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {receivedText && (
           <div className="w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
