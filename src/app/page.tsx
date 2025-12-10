@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { QRCodeSVG } from 'qrcode.react';
-import { v4 as uuidv4 } from 'uuid';
+import { generateRoomId } from '@/lib/word-generator';
 import { useLanguage } from '@/components/language-provider';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -26,7 +26,7 @@ export default function Home() {
   }, [t]);
 
   useEffect(() => {
-    const id = uuidv4();
+    const id = generateRoomId();
     setRoomId(id);
 
     // Initialize socket connection
@@ -131,6 +131,10 @@ export default function Home() {
 
         {roomId && (
           <div className="relative overflow-hidden flex flex-col items-center gap-4 p-6 bg-card/70 rounded-2xl shadow-inner w-full border">
+            <div className="text-center z-10">
+               <p className="text-[10px] text-muted-foreground uppercase tracking-widest mb-1">Room Name</p>
+               <h2 className="text-2xl font-bold font-mono text-primary tracking-tight">{roomId}</h2>
+            </div>
             <div className="qr-reflection" />
             <QRCodeSVG value={sendUrl} size={200} className="w-full h-auto max-w-[200px] rounded-lg relative z-10" bgColor="transparent" fgColor="hsl(var(--foreground))" />
             <div className="w-full relative z-10">

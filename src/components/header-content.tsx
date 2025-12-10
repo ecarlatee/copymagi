@@ -15,8 +15,14 @@ export function HeaderContent() {
       </Link>
       <div className="flex items-center gap-4">
         <nav className="flex gap-4">
+          <Link href="/" className="text-sm font-medium hover:underline">
+            {t("home")}
+          </Link>
           <Link href="/info" className="text-sm font-medium hover:underline">
             {t("info")}
+          </Link>
+          <Link href="/chat" className="text-sm font-medium hover:underline">
+            Chat
           </Link>
           <Link href="/contact" className="text-sm font-medium hover:underline">
             {t("contact")}

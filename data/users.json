@@ -1,0 +1,33 @@
+[
+  {
+    "id": "190be0f1-26e2-4b97-baf5-8155b2e25735",
+    "username": "test",
+    "tag": "2725",
+    "createdAt": 1765395344852,
+    "friends": [],
+    "bio": "",
+    "mnemonicHash": "$2b$10$DfynrhpEXiIClU7c4.lZQOOBp2lqghuJnB.wT2QTv7jPtNoemWzAq",
+    "settings": {
+      "themeColor": "default",
+      "fontSize": "small"
+    }
+  },
+  {
+    "id": "0f93ac9a-7a5c-46f6-a2cb-03432878a39e",
+    "username": "ecarlate",
+    "tag": "0000",
+    "mnemonicHash": "$2b$10$oDam9fDWLNjDuc6seyhrKebPxNz0KW0m/09rU4gTUIaamb1lS2ELm",
+    "createdAt": 1765402071712,
+    "friends": [],
+    "avatar": "/api/chat/file/avatar-0f93ac9a-7a5c-46f6-a2cb-03432878a39e-ac0b7569-931a-439b-bdc1-6f29729198b6.png",
+    "bio": "",
+    "banner": "/api/chat/file/banner-0f93ac9a-7a5c-46f6-a2cb-03432878a39e-0a056679-57b8-4857-9175-a26353205f72.jpeg",
+    "settings": {
+      "fontSize": "medium",
+      "themeColor": "default"
+    },
+    "role": "creator",
+    "avatarPosition": "50% 0%",
+    "bannerPosition": "76.5% 65%"
+  }
+]
