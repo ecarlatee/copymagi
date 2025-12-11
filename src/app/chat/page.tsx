@@ -27,6 +27,10 @@ export default function ChatPage() {
     settings?: { fontSize: string; themeColor: string; };
   } | null>(null);
   const [error, setError] = useState<string>('');
+  const [userCount, setUserCount] = useState<number>(0);
+  const [recoverDate, setRecoverDate] = useState('');
+  const [recoverTime, setRecoverTime] = useState('');
+  const [showRecover, setShowRecover] = useState(false);
 
   const [friends, setFriends] = useState<{id: string, username: string, tag: string}[]>([]);
   const [messages, setMessages] = useState<{
@@ -81,6 +85,12 @@ export default function ChatPage() {
     socket.on('connect', () => {
       console.log('Connected to chat server');
     });
+
+    socket.on('user-count', (count) => setUserCount(count));
+    socket.on('user-count-update', (count) => setUserCount(count));
+    
+    socket.on('recover-alert', (msg) => alert(msg));
+    socket.on('recover-failed', (msg) => setError(msg));
 
     socket.on('login-success', (userData) => {
       setUser(userData);
@@ -190,9 +200,35 @@ export default function ChatPage() {
     return () => {
       if (socket) socket.disconnect();
     };
-  }, [user]); // Added user dependency to ensure socket listeners have latest user state if needed, though mostly handled by closure or refs in real apps
+  }, [user]);
 
-  // ... (previous handlers)
+  // Session Timeout (15 minutes)
+  useEffect(() => {
+    if (!user) return;
+
+    let timeout: NodeJS.Timeout;
+    const resetTimer = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        alert("Session timed out due to inactivity (15m). Please log in again.");
+        socket.disconnect();
+        setUser(null);
+        setView('welcome');
+      }, 15 * 60 * 1000);
+    };
+
+    window.addEventListener('mousemove', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('click', resetTimer);
+    resetTimer();
+
+    return () => {
+      window.removeEventListener('mousemove', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('click', resetTimer);
+      clearTimeout(timeout);
+    };
+  }, [user]);
 
   const handleSendAnnouncement = () => {
     if (!announcementText.trim() || !user) return;
@@ -400,6 +436,9 @@ export default function ChatPage() {
           <p className="text-muted-foreground">
             {t('encryptedMsg')}
           </p>
+          <p className="text-sm text-muted-foreground font-mono">
+            Users Created: {userCount}
+          </p>
           <div className="flex flex-col gap-4">
             <Button onClick={handleCreateStart} size="lg">{t('createAccount')}</Button>
             <Button onClick={() => setView('login')} variant="outline" size="lg">{t('loginKey')}</Button>
@@ -495,6 +534,51 @@ export default function ChatPage() {
           <Button onClick={handleLogin} className="w-full">
             {t('unlockAccount')}
           </Button>
+          
+          <div className="pt-4 border-t">
+            <Button 
+              variant="link" 
+              className="w-full text-xs text-muted-foreground"
+              onClick={() => setShowRecover(!showRecover)}
+            >
+              Lost Account?
+            </Button>
+            
+            {showRecover && (
+              <div className="space-y-3 mt-2 bg-muted/50 p-4 rounded-lg animate-in slide-in-from-top-2">
+                <p className="text-xs text-muted-foreground">Enter the exact date and approximate time of account creation to recover access.</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <label className="text-xs">Date</label>
+                    <Input 
+                      type="date" 
+                      value={recoverDate} 
+                      onChange={(e) => setRecoverDate(e.target.value)}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs">Time</label>
+                    <Input 
+                      type="time" 
+                      value={recoverTime} 
+                      onChange={(e) => setRecoverTime(e.target.value)}
+                      className="h-8 text-xs"
+                    />
+                  </div>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="secondary" 
+                  className="w-full h-8 text-xs"
+                  onClick={() => socket.emit('recover-account', { date: recoverDate, time: recoverTime })}
+                >
+                  Recover Account
+                </Button>
+              </div>
+            )}
+          </div>
+
           <Button onClick={() => setView('welcome')} variant="ghost" className="w-full">
             {t('back')}
           </Button>
