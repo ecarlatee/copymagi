@@ -153,6 +153,9 @@ app.prepare().then(() => {
     }
   }, 60 * 1000);
 
+  // Rate Limiting for Recovery
+  const recoveryAttempts = new Map(); // ip -> { count, lastAttempt }
+
   io.on('connection', (socket) => {
     console.log('Client connected', socket.id);
 
@@ -161,6 +164,24 @@ app.prepare().then(() => {
 
     // --- Chat Events ---
     socket.on('recover-account', ({ username, date, time }) => {
+      const ip = socket.handshake.address;
+      const now = Date.now();
+      const record = recoveryAttempts.get(ip) || { count: 0, lastAttempt: 0 };
+
+      // Reset count if last attempt was > 1 hour ago
+      if (now - record.lastAttempt > 60 * 60 * 1000) {
+        record.count = 0;
+      }
+
+      if (record.count >= 5) {
+        socket.emit('recover-failed', 'Too many attempts. Please try again later (1 hour).');
+        return;
+      }
+
+      record.count++;
+      record.lastAttempt = now;
+      recoveryAttempts.set(ip, record);
+
       // date: YYYY-MM-DD, time: HH:MM
       if (!username || !date || !time) {
         socket.emit('recover-failed', 'Please provide username, date and time.');
@@ -448,6 +469,10 @@ app.prepare().then(() => {
     socket.on('get-user-profile', (targetId) => {
       const user = users.find(u => u.id === targetId);
       if (user) {
+        // Obscure creation date to prevent brute-force recovery
+        const date = new Date(user.createdAt);
+        const joinedDate = date.toLocaleString('default', { month: 'long', year: 'numeric' });
+
         socket.emit('user-profile', {
           id: user.id,
           username: user.username,
@@ -458,7 +483,7 @@ app.prepare().then(() => {
           bio: user.bio,
           banner: user.banner,
           bannerPosition: user.bannerPosition,
-          createdAt: user.createdAt
+          joinedDate: joinedDate // Send vague date instead of timestamp
         });
       }
     });

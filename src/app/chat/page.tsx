@@ -547,7 +547,13 @@ export default function ChatPage() {
             
             {showRecover && (
               <div className="space-y-3 mt-2 bg-muted/50 p-4 rounded-lg animate-in slide-in-from-top-2">
-                <p className="text-xs text-muted-foreground">Enter your username and the exact date/time of account creation to recover access.</p>
+                <p className="text-xs text-muted-foreground">
+                  Enter your username and the exact date/time of account creation to recover access. 
+                  <br/>
+                  <span className="font-bold text-red-500">Max 5 attempts/hour.</span> 
+                  <br/>
+                  If you need help, contact me on <a href="https://t.me/ecarlatee" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Telegram</a>.
+                </p>
                 <div className="space-y-1">
                   <label className="text-xs">Username (without tag)</label>
                   <Input 
@@ -947,7 +953,7 @@ export default function ChatPage() {
                       {viewingProfile.role === 'creator' && <span className="text-xs bg-yellow-500/20 text-yellow-600 px-2 py-0.5 rounded-full border border-yellow-500/50">{t('creator')}</span>}
                       {viewingProfile.role === 'admin' && <span className="text-xs bg-red-500/20 text-red-600 px-2 py-0.5 rounded-full border border-red-500/50">{t('admin')}</span>}
                     </div>
-                    <p className="text-sm text-muted-foreground">{t('memberSince')} {new Date(viewingProfile.createdAt).toLocaleDateString()}</p>
+                    <p className="text-sm text-muted-foreground">{t('memberSince')} {viewingProfile.joinedDate || new Date(viewingProfile.createdAt).toLocaleDateString()}</p>
                   </div>
 
                   {isEditingProfile ? (
