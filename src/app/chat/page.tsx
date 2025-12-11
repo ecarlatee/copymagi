@@ -30,6 +30,7 @@ export default function ChatPage() {
   const [userCount, setUserCount] = useState<number>(0);
   const [recoverDate, setRecoverDate] = useState('');
   const [recoverTime, setRecoverTime] = useState('');
+  const [recoverUsername, setRecoverUsername] = useState('');
   const [showRecover, setShowRecover] = useState(false);
 
   const [friends, setFriends] = useState<{id: string, username: string, tag: string}[]>([]);
@@ -546,7 +547,16 @@ export default function ChatPage() {
             
             {showRecover && (
               <div className="space-y-3 mt-2 bg-muted/50 p-4 rounded-lg animate-in slide-in-from-top-2">
-                <p className="text-xs text-muted-foreground">Enter the exact date and approximate time of account creation to recover access.</p>
+                <p className="text-xs text-muted-foreground">Enter your username and the exact date/time of account creation to recover access.</p>
+                <div className="space-y-1">
+                  <label className="text-xs">Username (without tag)</label>
+                  <Input 
+                    placeholder="Username"
+                    value={recoverUsername}
+                    onChange={(e) => setRecoverUsername(e.target.value)}
+                    className="h-8 text-xs"
+                  />
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
                     <label className="text-xs">Date</label>
@@ -571,7 +581,7 @@ export default function ChatPage() {
                   size="sm" 
                   variant="secondary" 
                   className="w-full h-8 text-xs"
-                  onClick={() => socket.emit('recover-account', { date: recoverDate, time: recoverTime })}
+                  onClick={() => socket.emit('recover-account', { username: recoverUsername, date: recoverDate, time: recoverTime })}
                 >
                   Recover Account
                 </Button>

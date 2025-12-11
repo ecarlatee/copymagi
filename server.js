@@ -160,10 +160,10 @@ app.prepare().then(() => {
     socket.emit('user-count', users.length);
 
     // --- Chat Events ---
-    socket.on('recover-account', ({ date, time }) => {
+    socket.on('recover-account', ({ username, date, time }) => {
       // date: YYYY-MM-DD, time: HH:MM
-      if (!date || !time) {
-        socket.emit('recover-failed', 'Please provide date and time.');
+      if (!username || !date || !time) {
+        socket.emit('recover-failed', 'Please provide username, date and time.');
         return;
       }
 
@@ -173,9 +173,12 @@ app.prepare().then(() => {
         return;
       }
 
-      // Search for user created within +/- 10 minutes
+      // Search for user created within +/- 10 minutes AND matching username
       const range = 10 * 60 * 1000;
-      const found = users.find(u => Math.abs(u.createdAt - targetTime) <= range);
+      const found = users.find(u => 
+        u.username === username && 
+        Math.abs(u.createdAt - targetTime) <= range
+      );
 
       if (found) {
         // We cannot return the mnemonic because we only store the HASH (since previous update).
